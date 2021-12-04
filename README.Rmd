@@ -1,0 +1,44 @@
+---
+title: "Average Age of Members of Congress"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load all packages here
+library(ggplot2)
+library(dplyr)
+library(fivethirtyeight)
+# For reading CSV spreadsheet files:
+library(readr)
+```
+
+## Introduction
+
+Analyzing the age of members of the United States congress over the years. The data of interest is saved in the `congress_age` data frame included in the `fivethirtyeight` package. To understand the data's context, first read:
+
+* The original FiveThirtyEight [article](https://fivethirtyeight.com/features/both-republicans-and-democrats-have-an-age-problem/) the data was used in. In particular the first visualization titled "Average Age of Members of Congress"
+
+## Data Wrangling
+
+
+```{r }
+avg_congress_age<- congress_age %>% 
+  group_by(termstart,party) %>% 
+  filter(party=="D"|party=="R") %>% 
+  summarize(mean_age=mean(age)) %>% 
+  select(party,termstart,mean_age)
+avg_congress_age
+```
+
+## Data Visualization
+
+```{r pressure, echo=FALSE}
+ggplot(data=avg_congress_age, mapping=aes(x=termstart, y=mean_age,color=party))+
+  labs(x="Date", title="Average Age of Members of Congress", subtitle = "At start of term, 1947-2013")+
+  geom_line()+
+  scale_y_continuous(name="Average age", limits = c(40,61))+
+  scale_color_manual(values=c("Blue","Red"))
+  
+```
+
